@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQ App | Emergency Assistance</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* App Specific Layout */
+        body {
+            background-color: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app-container {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .emergency-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .emergency-btn i {
+            font-size: 2.5rem;
+        }
+
+        .emergency-btn span {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .emergency-btn:hover {
+            background: rgba(230, 57, 70, 0.1);
+            border-color: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        /* Large highlight for primary emergencies */
+        .btn-police i { color: #3b82f6; }
+        .btn-medical i { color: #ef4444; }
+        .btn-fire i { color: #f97316; }
+        .btn-accident i { color: #facc15; }
+        .btn-women i { color: #ec4899; }
+        .btn-child i { color: #10b981; }
+        .btn-disaster i { color: #8b5cf6; }
+
+        /* Reporting View */
+        .app-view {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .app-view.active {
+            display: flex;
+        }
+
+        .dummy-map {
+            width: 100%;
+            height: 200px;
+            background: #1e293b;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .map-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--secondary);
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .location-status {
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .form-control {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-emergency-submit {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.4);
+            margin-top: 1rem;
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .btn-back:hover {
+            color: var(--white);
+        }
+
+        /* Success Message Overlay */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 20, 0.9);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-overlay i {
+            font-size: 5rem;
+            color: #10b981;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Selection Dashboard -->
+        <div id="selection-view" class="app-view active">
+            <header class="app-header">
+                <h1>ResQ Emergency Assistance</h1>
+                <p class="text-dim">Select the type of emergency to report</p>
+                <a href="index.html" class="btn-back" style="margin: 1rem auto 0;"><i class="fas fa-house"></i> Exit App</a>
+            </header>
+
+            <div class="emergency-grid">
+                <div class="emergency-btn btn-police" data-category="Police Emergency">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Police 🚓</span>
+                </div>
+                <div class="emergency-btn btn-medical" data-category="Medical Emergency">
+                    <i class="fas fa-truck-medical"></i>
+                    <span>Medical 🚑</span>
+                </div>
+                <div class="emergency-btn btn-fire" data-category="Fire Emergency">
+                    <i class="fas fa-fire-extinguisher"></i>
+                    <span>Fire 🚒</span>
+                </div>
+                <div class="emergency-btn btn-accident" data-category="Road Accident">
+                    <i class="fas fa-car-burst"></i>
+                    <span>Accidents 🚗</span>
+                </div>
+                <div class="emergency-btn btn-women" data-category="Women Safety Emergency">
+                    <i class="fas fa-person-breastfeeding"></i>
+                    <span>Women Safety 👩</span>
+                </div>
+                <div class="emergency-btn btn-child" data-category="Child Emergency">
+                    <i class="fas fa-baby"></i>
+                    <span>Child Help 👶</span>
+                </div>
+                <div class="emergency-btn btn-disaster" data-category="Public Emergency" style="grid-column: span 2;">
+                    <i class="fas fa-cloud-bolt"></i>
+                    <span>Disaster / Public Emergency 🌪️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporting Form -->
+        <div id="report-view" class="app-view">
+            <a href="#" class="btn-back" id="back-to-selection"><i class="fas fa-chevron-left"></i> Back to Categories</a>
+            
+            <header class="app-header" style="text-align: left; padding: 0; border: none; margin-bottom: 1.5rem;">
+                <h1 id="selected-title">Report Emergency</h1>
+                <p class="text-dim">Your safety is our priority.</p>
+            </header>
+
+            <div class="dummy-map">
+                <div class="map-marker"><i class="fas fa-location-dot"></i></div>
+                <div style="height: 100%; width: 100%; opacity: 0.3; background-image: radial-gradient(#334155 1px, transparent 1px); background-size: 20px 20px;"></div>
+            </div>
+
+            <div class="location-status">
+                <i class="fas fa-circle-check text-red"></i>
+                <span>📍 Your location will be shared with emergency responders</span>
+            </div>
+
+            <button class="btn btn-outline" style="width: 100%;">Send Current Location</button>
+
+            <div class="report-form">
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label>Emergency Type</label>
+                    <input type="text" id="emergency-type-input" class="form-control" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label>Additional Message</label>
+                    <textarea class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
+                </div>
+                <button class="btn btn-emergency-submit" id="submit-report" style="width: 100%;">Submit Emergency Report</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="success-message">
+        <i class="fas fa-circle-check"></i>
+        <h1>Report Submitted</h1>
+        <p class="text-dim">Nearby responders have been notified. Stay where you are and try to remain calm.</p>
+        <button class="btn btn-outline" id="success-close" style="margin-top: 2rem;">Return to App</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
