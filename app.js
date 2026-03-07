@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Views
     const selectionView = document.getElementById('selection-view');
     const reportView = document.getElementById('report-view');
     const successOverlay = document.getElementById('success-message');
     
-    const emergencyBtns = document.querySelectorAll('.emergency-btn');
+    // Components
+    const emergencyCards = document.querySelectorAll('.emergency-card');
     const backBtn = document.getElementById('back-to-selection');
     const submitBtn = document.getElementById('submit-report');
     const successClose = document.getElementById('success-close');
@@ -11,15 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const typeInput = document.getElementById('emergency-type-input');
     const titleHeader = document.getElementById('selected-title');
 
-    // Handle Category Selection
-    emergencyBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const category = btn.getAttribute('data-category');
+    // Handle Card Selection
+    emergencyCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const category = card.getAttribute('data-category');
             typeInput.value = category;
-            titleHeader.innerText = `Report ${category}`;
+            titleHeader.innerText = `Report ${category.replace(/[🚓🚑🚒🚗👩👶🌪️]/g, '').trim()}`;
             
-            selectionView.classList.remove('active');
+            selectionView.style.display = 'none';
             reportView.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
 
@@ -27,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.addEventListener('click', (e) => {
         e.preventDefault();
         reportView.classList.remove('active');
-        selectionView.classList.add('active');
+        selectionView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     // Handle Form Submission
@@ -39,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     successClose.addEventListener('click', () => {
         successOverlay.style.display = 'none';
         reportView.classList.remove('active');
-        selectionView.classList.add('active');
+        selectionView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
