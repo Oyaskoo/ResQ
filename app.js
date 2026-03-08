@@ -130,17 +130,30 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         try {
-            await addDoc(collection(db, "reports"), {
-                category: category,
-                message: message,
-                location: currentLocation,
-                responders: selectedResponders,
-                timestamp: serverTimestamp(),
-                status: "pending"
+            await addDoc(collection(db, "emergencyReports"), {
+                emergencyType: category,
+                latitude: currentLocation.lat,
+                longitude: currentLocation.lng,
+                additionalMessage: message,
+                forwardedServices: selectedResponders,
+                timestamp: serverTimestamp()
             });
 
+            // Show success overlay
             successOverlay.style.display = 'flex';
             
+            // Add incident marker (Post-submission feature)
+            const incidentMarker = L.circleMarker([currentLocation.lat, currentLocation.lng], {
+                radius: 12,
+                fillColor: "#e63946",
+                color: "#fff",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map)
+            .bindPopup(`<b style="color: #e63946;">Reported Incident</b><br>${category}`)
+            .openPopup();
+
             // Clear message area and checkboxes for next time
             if (messageArea) messageArea.value = '';
             document.querySelectorAll('input[name="forward-to"]').forEach(cb => cb.checked = false);
