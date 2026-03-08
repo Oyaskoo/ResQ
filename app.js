@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             typeInput.value = category;
             
             // Extract text without emojis for the header
-            const cleanTitle = category.replace(/[🚓🚑🚒🚗🌪️]/g, '').trim();
+            const cleanTitle = category.replace(/[🚓🚑🚒🚗🌪️👤🔥]/g, '').trim();
             titleHeader.innerText = cleanTitle;
             
             selectionView.style.display = 'none';
