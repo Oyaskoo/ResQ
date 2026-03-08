@@ -1,3 +1,6 @@
+import { db } from './firebase.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     // Views
     const selectionView = document.getElementById('selection-view');
@@ -17,20 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let map;
     let marker;
+    let currentLocation = { lat: 40.7128, lng: -74.0060 }; // Default fallback
 
     // Initialize Leaflet Map
     function initMap() {
         if (map) return;
         
-        // Default center (New York or similar fallback)
-        map = L.map('map').setView([40.7128, -74.0060], 13);
+        // Default center
+        map = L.map('map').setView([currentLocation.lat, currentLocation.lng], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         // Add a default marker
-        marker = L.marker([40.7128, -74.0060]).addTo(map)
+        marker = L.marker([currentLocation.lat, currentLocation.lng]).addTo(map)
             .bindPopup('Reporting Area')
             .openPopup();
     }
@@ -42,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             typeInput.value = category;
             
             // Extract text without emojis for the header
-            const cleanTitle = category.replace(/[🚓🚑🚒🚗👩👶🌪️]/g, '').trim();
+            const cleanTitle = category.replace(/[🚓🚑🚒🚗🌪️]/g, '').trim();
             titleHeader.innerText = cleanTitle;
             
             selectionView.style.display = 'none';
@@ -70,16 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
-                const userLoc = [latitude, longitude];
+                currentLocation = { lat: latitude, lng: longitude };
 
-                map.setView(userLoc, 15);
+                map.setView([latitude, longitude], 15);
                 
                 if (marker) {
-                    marker.setLatLng(userLoc)
+                    marker.setLatLng([latitude, longitude])
                         .setPopupContent('Your Current Location')
                         .openPopup();
                 } else {
-                    marker = L.marker(userLoc).addTo(map)
+                    marker = L.marker([latitude, longitude]).addTo(map)
                         .bindPopup('Your Current Location')
                         .openPopup();
                 }
@@ -115,12 +119,38 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Handle Form Submission
-    submitBtn.addEventListener('click', () => {
-        successOverlay.style.display = 'flex';
-        // Clear message area and checkboxes for next time
-        if (messageArea) messageArea.value = '';
-        document.querySelectorAll('input[name="forward-to"]').forEach(cb => cb.checked = false);
+    // Handle Form Submission with Firestore
+    submitBtn.addEventListener('click', async () => {
+        const category = typeInput.value;
+        const message = messageArea.value;
+        const selectedResponders = Array.from(document.querySelectorAll('input[name="forward-to"]:checked'))
+            .map(cb => cb.value);
+
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+
+        try {
+            await addDoc(collection(db, "reports"), {
+                category: category,
+                message: message,
+                location: currentLocation,
+                responders: selectedResponders,
+                timestamp: serverTimestamp(),
+                status: "pending"
+            });
+
+            successOverlay.style.display = 'flex';
+            
+            // Clear message area and checkboxes for next time
+            if (messageArea) messageArea.value = '';
+            document.querySelectorAll('input[name="forward-to"]').forEach(cb => cb.checked = false);
+        } catch (error) {
+            console.error("Error submitting report:", error);
+            alert("Submission failed. Check your internet connection.");
+        } finally {
+            submitBtn.innerHTML = 'Submit Emergency Report';
+            submitBtn.disabled = false;
+        }
     });
 
     // Handle Success Close
