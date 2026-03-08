@@ -3,118 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResQ App | Emergency Assistance Dashboard</title>
-    <link rel="stylesheet" href="index.css">
+    <title>ResQ Emergency Assistance</title>
+    <!-- Leaflet.js for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Mobile-First App Layout Overhaul */
+        :root {
+            --bg-dark: #050a14;
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --accent-red: #e63946;
+            --accent-blue: #3b82f6;
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
             background-color: var(--bg-dark);
-            height: auto;
+            color: var(--text-light);
             min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header */
+        header {
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            overflow-y: auto;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
         }
 
-        .app-container {
-            flex: 1;
-            padding: 1rem;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .app-nav-top {
+        .nav-top {
             display: flex;
-            justify-content: flex-end;
-            padding: 1rem 0;
+            justify-content: flex-start;
         }
 
-        .exit-btn {
-            background: var(--glass);
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: var(--text-dim);
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             transition: var(--transition);
         }
 
-        .exit-btn:hover {
-            color: var(--white);
-            border-color: var(--white);
+        .btn-back:hover {
             background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            transform: translateX(-3px);
         }
 
-        .app-header {
-            text-align: left;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
+        .header-content h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .app-header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .header-content p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
         }
 
-        /* Emergency Cards */
+        /* Emergency Grid */
         .emergency-grid {
             display: grid;
-            grid-template-columns: 1fr; /* Default mobile 1 column */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.25rem;
-            margin-bottom: 3rem;
-        }
-
-        @media (min-width: 640px) {
-            .emergency-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            margin-bottom: 4rem;
         }
 
         .emergency-card {
-            background: var(--glass);
+            background: var(--card-bg);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.25rem;
             cursor: pointer;
             transition: var(--transition);
-            text-align: left;
+            backdrop-filter: blur(10px);
         }
 
         .emergency-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-red);
             background: rgba(230, 57, 70, 0.05);
-            border-color: var(--secondary);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.1);
+        }
+
+        .emergency-card:active {
+            transform: scale(0.98);
         }
 
         .card-icon {
             font-size: 2.5rem;
-            min-width: 60px;
+            width: 60px;
+            height: 60px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            transition: var(--transition);
-        }
-
-        .emergency-card:hover .card-icon {
-            transform: scale(1.1);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
         }
 
         .card-info h3 {
-            margin-bottom: 0.25rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
         }
 
         .card-info p {
@@ -123,7 +148,7 @@
             line-height: 1.4;
         }
 
-        /* Category Specific Colors */
+        /* Colors */
         .color-police { color: #3b82f6; }
         .color-medical { color: #ef4444; }
         .color-fire { color: #f97316; }
@@ -132,122 +157,120 @@
         .color-child { color: #10b981; }
         .color-disaster { color: #8b5cf6; }
 
-        /* How to Use Section */
-        .how-to-section {
-            padding: 2.5rem 0;
-            border-top: 1px solid var(--glass-border);
-            margin-top: 2rem;
+        /* How to Use */
+        .how-to-use {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
         }
 
-        .how-to-section h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+        .how-to-use h2 {
             text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
         }
 
-        .steps-grid {
+        .steps-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
         }
 
-        @media (min-width: 640px) {
-            .steps-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        .step-item {
+        .step {
             text-align: center;
         }
 
-        .step-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--glass);
+        .step-num {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-blue);
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
-            font-size: 1.25rem;
-            color: var(--accent);
-            border: 1px solid var(--glass-border);
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
-        .step-item p {
-            font-size: 0.8rem;
-            font-weight: 500;
-            line-height: 1.3;
+        .step p {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
         }
 
-        /* Mission Footer Card */
-        .mission-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.05) 100%);
-            border: 1px solid var(--glass-border);
-            padding: 1.5rem;
-            border-radius: 20px;
-            margin: 3rem 0;
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 0;
             text-align: center;
         }
 
-        .mission-card p {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            font-style: italic;
+        .footer-logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
         }
 
-        /* Reporting View */
+        .footer-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Report View */
         .report-view {
             display: none;
-            padding: 1rem 0;
-            animation: fadeInUp 0.4s ease-out;
+            animation: fadeIn 0.5s ease;
         }
 
         .report-view.active {
             display: block;
         }
 
-        .dummy-map {
+        #map {
+            height: 400px;
             width: 100%;
-            height: 250px;
-            background: #1e293b;
             border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
             margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            z-index: 1;
         }
 
-        .map-marker {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--secondary);
-            font-size: 2.5rem;
-            z-index: 5;
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        .location-banner {
-            background: rgba(230, 57, 70, 0.1);
+        .btn-location {
+            width: 100%;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--accent-blue);
             padding: 1rem;
             border-radius: 12px;
-            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            border: 1px solid rgba(230, 57, 70, 0.2);
-            margin-bottom: 1.5rem;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .btn-location:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
         }
 
         .report-card {
-            background: var(--glass);
+            background: var(--card-bg);
             border: 1px solid var(--glass-border);
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
         }
 
         .form-group {
@@ -256,7 +279,7 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-dim);
@@ -264,182 +287,211 @@
 
         .form-control {
             width: 100%;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 1rem;
-            color: var(--white);
-            font-family: inherit;
+            color: var(--text-light);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .btn-submit {
             width: 100%;
-            background: var(--secondary);
-            color: var(--white);
-            padding: 1.25rem;
-            border-radius: 15px;
+            background: var(--accent-red);
+            color: white;
+            padding: 1.2rem;
+            border-radius: 12px;
             font-weight: 800;
             font-size: 1.1rem;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.4);
+            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3);
             transition: var(--transition);
         }
 
         .btn-submit:hover {
             transform: scale(1.02);
-            filter: brightness(1.1);
+            box-shadow: 0 15px 30px rgba(230, 57, 70, 0.4);
         }
 
-        /* Overlays */
-        .success-overlay {
+        /* Success Overlay */
+        .overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 14, 20, 0.98);
-            z-index: 9999;
-            flex-direction: column;
+            background: rgba(5, 10, 20, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            text-align: center;
             padding: 2rem;
-            backdrop-filter: blur(15px);
+            text-align: center;
         }
 
-        .success-overlay i {
+        .success-content {
+            max-width: 400px;
+        }
+
+        .success-icon {
             font-size: 5rem;
             color: #10b981;
             margin-bottom: 1.5rem;
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .header-content h1 { font-size: 1.8rem; }
+            .emergency-grid { grid-template-columns: 1fr; }
+            .how-to-use { padding: 1.5rem; }
+            .steps-container { grid-template-columns: 1fr; gap: 1.5rem; }
+            #map { height: 300px; }
+            .report-card { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <!-- Dashboard View -->
+    <div class="container">
+        <!-- SELECTION VIEW -->
         <div id="selection-view">
-            <div class="app-nav-top">
-                <a href="index.html" class="exit-btn"><i class="fas fa-arrow-left"></i> Exit App</a>
-            </div>
-
-            <header class="app-header">
-                <h1>ResQ Assistance</h1>
-                <p class="text-dim">Select the type of emergency to report.</p>
+            <header>
+                <div class="nav-top">
+                    <a href="index.html" class="btn-back"><i class="fas fa-home"></i> Home</a>
+                </div>
+                <div class="header-content">
+                    <h1>ResQ Emergency Assistance</h1>
+                    <p>Select the type of emergency to report.</p>
+                </div>
             </header>
 
-            <!-- Emergency Cards -->
             <div class="emergency-grid">
-                <div class="emergency-card" data-category="Police 🚓">
+                <!-- Police -->
+                <div class="emergency-card" data-category="Police Emergencies 🚓">
                     <div class="card-icon color-police"><i class="fas fa-user-shield"></i></div>
                     <div class="card-info">
-                        <h3>Police</h3>
+                        <h3>Police Emergencies</h3>
                         <p>Report crimes, theft, or suspicious activity.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Medical 🚑">
+                <!-- Medical -->
+                <div class="emergency-card" data-category="Medical Emergencies 🚑">
                     <div class="card-icon color-medical"><i class="fas fa-truck-medical"></i></div>
                     <div class="card-info">
-                        <h3>Medical</h3>
-                        <p>Request ambulance or urgent medical assistance.</p>
+                        <h3>Medical Emergencies</h3>
+                        <p>Request ambulance or urgent medical help.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Fire 🚒">
+                <!-- Fire -->
+                <div class="emergency-card" data-category="Fire Emergencies 🚒">
                     <div class="card-icon color-fire"><i class="fas fa-fire-extinguisher"></i></div>
                     <div class="card-info">
-                        <h3>Fire</h3>
+                        <h3>Fire Emergencies</h3>
                         <p>Report fire incidents or hazardous situations.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Road Accident 🚗">
+                <!-- Road Accident -->
+                <div class="emergency-card" data-category="Road Accidents 🚗">
                     <div class="card-icon color-accident"><i class="fas fa-car-burst"></i></div>
                     <div class="card-info">
-                        <h3>Road Accident</h3>
+                        <h3>Road Accidents</h3>
                         <p>Report traffic accidents or injured victims.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Women Safety 👩">
-                    <div class="card-icon color-women"><i class="fas fa-person-breastfeeding"></i></div>
+                <!-- Women Safety -->
+                <div class="emergency-card" data-category="Women Safety Emergencies 👩">
+                    <div class="card-icon color-women"><i class="fas fa-person-dress-burst"></i></div>
                     <div class="card-info">
                         <h3>Women Safety</h3>
                         <p>Report harassment or personal safety threats.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Child Help 👶">
+                <!-- Child Emergencies -->
+                <div class="emergency-card" data-category="Child Emergencies 👶">
                     <div class="card-icon color-child"><i class="fas fa-baby"></i></div>
                     <div class="card-info">
-                        <h3>Child Help</h3>
+                        <h3>Child Emergencies</h3>
                         <p>Report missing or endangered children.</p>
                     </div>
                 </div>
 
-                <div class="emergency-card" data-category="Public Emergency 🌪️" style="grid-column: 1 / -1;">
+                <!-- Disaster -->
+                <div class="emergency-card" data-category="Disaster or Public Emergency 🌪️">
                     <div class="card-icon color-disaster"><i class="fas fa-cloud-bolt"></i></div>
                     <div class="card-info">
-                        <h3>Public Emergency</h3>
+                        <h3>Disaster/Public Emergency</h3>
                         <p>Report floods, earthquakes, or large public incidents.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- How it Works -->
-            <section class="how-to-section">
+            <section class="how-to-use">
                 <h2>How to Use ResQ</h2>
-                <div class="steps-grid">
-                    <div class="step-item">
-                        <div class="step-icon">1</div>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-num">1</div>
                         <p>Select the type of emergency</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-icon">2</div>
+                    <div class="step">
+                        <div class="step-num">2</div>
                         <p>Confirm your location on map</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-icon">3</div>
-                        <p>Add additional information</p>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <p>Add additional details</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-icon">4</div>
+                    <div class="step">
+                        <div class="step-num">4</div>
                         <p>Submit the emergency report</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Info Card -->
-            <div class="mission-card">
-                <p>ResQ helps connect citizens with emergency responders quickly and efficiently. This demo simulates an emergency reporting system.</p>
-            </div>
+            <footer>
+                <span class="footer-logo">ResQ Emergency Platform</span>
+                <p class="footer-text">ResQ connects citizens with emergency responders quickly and efficiently through smart emergency reporting.</p>
+            </footer>
         </div>
 
-        <!-- Reporting View -->
+        <!-- REPORT VIEW -->
         <div id="report-view" class="report-view">
-            <a href="#" id="back-to-selection" class="exit-btn" style="width: fit-content; margin-bottom: 1.5rem;"><i class="fas fa-chevron-left"></i> Change Category</a>
-            
-            <header class="app-header">
-                <h1 id="selected-title">Report Emergency</h1>
-                <p class="text-dim">Your precise location is being captured.</p>
+            <header>
+                <div class="nav-top">
+                    <a href="#" id="back-to-selection" class="btn-back"><i class="fas fa-chevron-left"></i> Change Category</a>
+                </div>
+                <div class="header-content">
+                    <h1 id="selected-title">Report Emergency</h1>
+                    <p>Precise location and details are required for faster response.</p>
+                </div>
             </header>
 
-            <div class="dummy-map">
-                <div class="map-marker"><i class="fas fa-location-dot"></i></div>
-                <div style="height: 100%; width: 100%; opacity: 0.15; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 30px 30px;"></div>
-                <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; font-size: 10px; color: #fff;">GPS: 40.7128° N, 74.0060° W</div>
-            </div>
+            <div id="map"></div>
 
-            <div class="location-banner">
-                <i class="fas fa-location-crosshairs"></i>
-                <span>📍 Your location will be shared with nearby responders.</span>
-            </div>
-
-            <button class="btn btn-outline" style="width: 100%; margin-bottom: 2rem;">Send Current Location</button>
+            <button id="get-location" class="btn-location">
+                <i class="fas fa-location-crosshairs"></i> Send Current Location
+            </button>
 
             <div class="report-card">
                 <div class="form-group">
@@ -448,20 +500,21 @@
                 </div>
                 <div class="form-group">
                     <label>Additional Message</label>
-                    <textarea class="form-control" rows="5" placeholder="Describe the situation and provide useful details."></textarea>
+                    <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
                 </div>
                 <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
             </div>
         </div>
-
     </div>
 
-    <!-- Success Message -->
-    <div id="success-message" class="success-overlay">
-        <i class="fas fa-circle-check"></i>
-        <h1>Report Submitted</h1>
-        <p class="text-dim">Emergency report submitted. Nearby responders have been notified. Stay where you are and wait for assistance.</p>
-        <button id="success-close" class="btn btn-outline" style="margin-top: 2rem; padding: 1rem 3rem;">Return to Dashboard</button>
+    <!-- SUCCESS OVERLAY -->
+    <div id="success-overlay" class="overlay">
+        <div class="success-content">
+            <i class="fas fa-circle-check success-icon"></i>
+            <h2>Report Submitted</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Emergency report submitted successfully. Nearby responders have been notified.</p>
+            <button id="close-success" class="btn-back" style="margin: 0 auto; color: white;">Return to Dashboard</button>
+        </div>
     </div>
 
     <script src="app.js"></script>
