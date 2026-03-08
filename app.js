@@ -109,14 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
         getLocationBtn.style.color = '';
         getLocationBtn.style.borderColor = '';
 
+        // Reset checkboxes
+        document.querySelectorAll('input[name="forward-to"]').forEach(cb => cb.checked = false);
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     // Handle Form Submission
     submitBtn.addEventListener('click', () => {
         successOverlay.style.display = 'flex';
-        // Clear message area for next time
+        // Clear message area and checkboxes for next time
         if (messageArea) messageArea.value = '';
+        document.querySelectorAll('input[name="forward-to"]').forEach(cb => cb.checked = false);
     });
 
     // Handle Success Close

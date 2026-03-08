@@ -84,6 +84,7 @@
             margin-bottom: 0.25rem;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -356,6 +357,53 @@
             100% { transform: scale(1); }
         }
 
+        /* Forward Alert Section */
+        .forward-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .forward-section h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-red);
+            cursor: pointer;
+        }
+
+        .checkbox-item span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 600px) {
             .header-content h1 { font-size: 1.8rem; }
@@ -364,6 +412,7 @@
             .steps-container { grid-template-columns: 1fr; gap: 1.5rem; }
             #map { height: 300px; }
             .report-card { padding: 1.5rem; }
+            .checkbox-group { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -388,7 +437,7 @@
                     <div class="card-icon color-police"><i class="fas fa-user-shield"></i></div>
                     <div class="card-info">
                         <h3>Police Emergencies</h3>
-                        <p>Report crimes, theft, or suspicious activity.</p>
+                        <p>Report crimes, theft, or suspicious activities.</p>
                     </div>
                 </div>
 
@@ -419,30 +468,12 @@
                     </div>
                 </div>
 
-                <!-- Women Safety -->
-                <div class="emergency-card" data-category="Women Safety Emergencies 👩">
-                    <div class="card-icon color-women"><i class="fas fa-person-dress-burst"></i></div>
-                    <div class="card-info">
-                        <h3>Women Safety</h3>
-                        <p>Report harassment or personal safety threats.</p>
-                    </div>
-                </div>
-
-                <!-- Child Emergencies -->
-                <div class="emergency-card" data-category="Child Emergencies 👶">
-                    <div class="card-icon color-child"><i class="fas fa-baby"></i></div>
-                    <div class="card-info">
-                        <h3>Child Emergencies</h3>
-                        <p>Report missing or endangered children.</p>
-                    </div>
-                </div>
-
                 <!-- Disaster -->
                 <div class="emergency-card" data-category="Disaster or Public Emergency 🌪️">
                     <div class="card-icon color-disaster"><i class="fas fa-cloud-bolt"></i></div>
                     <div class="card-info">
                         <h3>Disaster/Public Emergency</h3>
-                        <p>Report floods, earthquakes, or large public incidents.</p>
+                        <p>Report floods, earthquakes, or major incidents.</p>
                     </div>
                 </div>
             </div>
@@ -471,7 +502,7 @@
 
             <footer>
                 <span class="footer-logo">ResQ Emergency Platform</span>
-                <p class="footer-text">ResQ connects citizens with emergency responders quickly and efficiently through smart emergency reporting.</p>
+                <p class="footer-text">ResQ connects citizens with emergency responders quickly through a smart emergency reporting system.</p>
             </footer>
         </div>
 
@@ -502,7 +533,29 @@
                     <label>Additional Message</label>
                     <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
                 </div>
-                <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
+
+                <!-- Forward Alert To Section -->
+                <div class="forward-section">
+                    <h4>Forward Alert To</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Police">
+                            <span>Police 🚓</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Ambulance">
+                            <span>Ambulance 🚑</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Fire">
+                            <span>Fire Dept 🚒</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
+                </div>
             </div>
         </div>
     </div>
@@ -512,7 +565,7 @@
         <div class="success-content">
             <i class="fas fa-circle-check success-icon"></i>
             <h2>Report Submitted</h2>
-            <p style="color: var(--text-dim); margin-bottom: 2rem;">Emergency report submitted successfully. Nearby responders have been notified.</p>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Emergency report submitted successfully. Selected responders have been notified.</p>
             <button id="close-success" class="btn-back" style="margin: 0 auto; color: white;">Return to Dashboard</button>
         </div>
     </div>
