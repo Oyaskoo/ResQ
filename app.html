@@ -266,6 +266,66 @@
             transform: translateY(-2px);
         }
 
+        .btn-cancel {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .photo-upload-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .photo-upload-box {
+            border: 2px dashed var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .photo-upload-box:hover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .photo-upload-box i {
+            font-size: 2rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .photo-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            border-radius: 8px;
+            display: none;
+        }
+
         .report-card {
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
@@ -503,7 +563,7 @@
             <div id="map"></div>
 
             <button id="get-location" class="btn-location">
-                <i class="fas fa-location-crosshairs"></i> Send Current Location
+                <i class="fas fa-location-crosshairs"></i> Locate My Location
             </button>
 
             <div class="report-card">
@@ -535,8 +595,20 @@
                     </div>
                 </div>
 
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section">
+                    <label style="display: block; margin-bottom: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Upload Incident Photo</label>
+                    <div class="photo-upload-box" onclick="document.getElementById('photo-upload').click()">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <p style="font-size: 0.9rem; color: var(--text-dim);">Tap to upload evidence photo</p>
+                        <input type="file" id="photo-upload" class="file-input" accept="image/*">
+                        <img id="photo-preview" class="photo-preview" src="#" alt="Preview">
+                    </div>
+                </div>
+
                 <div style="margin-top: 2rem;">
                     <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
+                    <button id="cancel-report" class="btn-cancel">Cancel Report</button>
                 </div>
             </div>
         </div>
