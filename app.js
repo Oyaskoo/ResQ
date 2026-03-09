@@ -26,6 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let marker;
     let selectedLocation = { lat: 40.7128, lng: -74.0060 }; // Default fallback
     let photoFile = null;
+    let selectedSeverity = "Moderate";
+
+    // Severity Level Logic
+    const severityCards = document.querySelectorAll('.severity-card');
+    severityCards.forEach(card => {
+        card.addEventListener('click', () => {
+            severityCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            selectedSeverity = card.getAttribute('data-level');
+        });
+    });
 
     // Initialize Leaflet Map
     function initMap() {
@@ -149,6 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
         photoPreview.src = '#';
         photoInput.value = '';
 
+        // Reset Severity
+        selectedSeverity = "Moderate";
+        severityCards.forEach(c => {
+            c.classList.remove('active');
+            if (c.getAttribute('data-level') === "Moderate") c.classList.add('active');
+        });
+
         // Reset map markers
         if (map && marker) {
             selectedLocation = { lat: 40.7128, lng: -74.0060 };
@@ -196,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             await addDoc(collection(db, "emergencyReports"), {
                 emergencyType: category,
+                severityLevel: selectedSeverity,
                 latitude: selectedLocation.lat,
                 longitude: selectedLocation.lng,
                 mapsLink: mapsLink,

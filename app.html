@@ -326,6 +326,61 @@
             display: none;
         }
 
+        /* Severity Level */
+        .severity-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .severity-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .severity-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .severity-card i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .severity-card span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .severity-card[data-level="Low"].active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .severity-card[data-level="Moderate"].active {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: #f97316;
+            color: #f97316;
+        }
+        .severity-card[data-level="Critical"].active {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .severity-card:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .report-card {
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
@@ -574,6 +629,25 @@
                 <div class="form-group">
                     <label>Additional Message</label>
                     <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
+                </div>
+
+                <!-- Severity Level Section -->
+                <div class="severity-section">
+                    <label style="display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Severity Level</label>
+                    <div class="severity-group">
+                        <div class="severity-card" data-level="Low">
+                            <i class="fas fa-circle-info" style="color: #10b981;"></i>
+                            <span>Low</span>
+                        </div>
+                        <div class="severity-card active" data-level="Moderate">
+                            <i class="fas fa-triangle-exclamation" style="color: #f97316;"></i>
+                            <span>Moderate</span>
+                        </div>
+                        <div class="severity-card" data-level="Critical">
+                            <i class="fas fa-circle-exclamation" style="color: #ef4444;"></i>
+                            <span>Critical</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Forward Alert To Section -->
