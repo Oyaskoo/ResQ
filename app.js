@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Views
     const selectionView = document.getElementById('selection-view');
     const reportView = document.getElementById('report-view');
+    const devicesView = document.getElementById('devices-view');
+    const connectionView = document.getElementById('connection-view');
     const successOverlay = document.getElementById('success-overlay');
     
     // Components
@@ -15,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.getElementById('cancel-report');
     const closeSuccessBtn = document.getElementById('close-success');
     const getLocationBtn = document.getElementById('get-location');
+    
+    // Device Section Components
+    const navDeviceBtn = document.getElementById('nav-device');
+    const backToDashboardFromDevices = document.getElementById('back-to-selection-from-devices');
+    const backToDevicesBtn = document.getElementById('back-to-devices');
+    const deviceCards = document.querySelectorAll('.device-card');
+    const connectDeviceBtn = document.getElementById('connect-device-btn');
+    const connectionSuccessMsg = document.getElementById('connection-success');
     
     const typeInput = document.getElementById('emergency-type-input');
     const titleHeader = document.getElementById('selected-title');
@@ -185,6 +195,64 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelBtn.addEventListener('click', (e) => {
         e.preventDefault();
         resetForm();
+    });
+
+    // Device Navigation Logic
+    navDeviceBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectionView.style.display = 'none';
+        reportView.classList.remove('active');
+        devicesView.classList.add('active');
+        connectionView.classList.remove('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    backToDashboardFromDevices.addEventListener('click', (e) => {
+        e.preventDefault();
+        devicesView.classList.remove('active');
+        selectionView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    backToDevicesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        connectionView.classList.remove('active');
+        devicesView.classList.add('active');
+        connectionSuccessMsg.style.display = 'none';
+        connectDeviceBtn.disabled = false;
+        connectDeviceBtn.innerHTML = 'Connect Device';
+    });
+
+    deviceCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const deviceType = card.getAttribute('data-device');
+            const icon = card.querySelector('i').className;
+            const title = card.querySelector('h3').innerText;
+            const description = card.querySelector('p').innerText;
+
+            document.getElementById('connection-title').innerText = `Connect ${deviceType}`;
+            document.getElementById('device-display-name').innerText = title;
+            document.getElementById('device-explanation').innerText = description;
+            document.getElementById('connection-icon').className = icon;
+
+            devicesView.classList.remove('active');
+            connectionView.classList.add('active');
+            connectionSuccessMsg.style.display = 'none';
+            connectDeviceBtn.disabled = false;
+            connectDeviceBtn.innerHTML = 'Connect Device';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    connectDeviceBtn.addEventListener('click', () => {
+        connectDeviceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+        connectDeviceBtn.disabled = true;
+
+        setTimeout(() => {
+            connectDeviceBtn.innerHTML = '<i class="fas fa-circle-check"></i> Connected';
+            connectionSuccessMsg.style.display = 'block';
+        }, 1500);
     });
 
     // Handle Form Submission with Firestore & Storage
