@@ -30,10 +30,35 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-circle-check"></i> Connected';
             // Find the success message div within the same card
             const successMsg = btn.nextElementSibling;
-            if (successMsg && successMsg.classList.contains('sidebar-success')) {
+            if (successMsg && successMsg.classList.contains('connection-success')) {
                 successMsg.style.display = 'block';
             }
         }, 1500);
+    };
+
+    // Make toggleDevicePopup available globally
+    window.toggleDevicePopup = function(show = true) {
+        const popup = document.getElementById('device-popup');
+        const overlay = document.getElementById('device-popup-overlay');
+        
+        if (show) {
+            popup.classList.add('active');
+            overlay.classList.add('active');
+        } else {
+            popup.classList.remove('active');
+            overlay.classList.remove('active');
+            
+            // Optional: reset connection buttons when closed
+            // setTimeout(() => {
+            //     document.querySelectorAll('.btn-connect').forEach(btn => {
+            //         btn.innerHTML = 'Connect';
+            //         btn.disabled = false;
+            //     });
+            //     document.querySelectorAll('.connection-success').forEach(msg => {
+            //         msg.style.display = 'none';
+            //     });
+            // }, 300);
+        }
     };
 
     let map;

@@ -519,38 +519,81 @@
             font-weight: 500;
         }
 
-        /* Dashboard Layout */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
-
-        .main-content {
+        /* Device Popup */
+        .device-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(5, 10, 20, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* Sidebar Styling */
-        .sidebar {
-            background: rgba(15, 23, 42, 0.4);
+        .device-popup-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .device-popup {
+            position: fixed;
+            top: 5rem;
+            right: 2rem;
+            width: 380px;
+            max-width: calc(100vw - 4rem);
+            background: rgba(15, 23, 42, 0.9);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 1.5rem;
-            position: sticky;
-            top: 2rem;
+            z-index: 1001;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px);
+            display: none;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .sidebar h2 {
-            font-size: 1.2rem;
+        .device-popup.active {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1.5rem;
-            text-align: center;
-            color: var(--text-light);
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 0.8rem;
         }
 
-        .sidebar-card {
+        .popup-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-light);
+        }
+
+        .btn-close-popup {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-close-popup:hover {
+            color: var(--text-light);
+            transform: rotate(90deg);
+        }
+
+        /* Reusable Card Styles (from previous sidebar) */
+        .device-card-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
@@ -559,36 +602,36 @@
             transition: var(--transition);
         }
 
-        .sidebar-card:hover {
+        .device-card-item:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .sidebar-card-header {
+        .device-card-header {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 0.8rem;
         }
 
-        .sidebar-icon {
-            font-size: 2rem;
+        .device-icon {
+            font-size: 1.8rem;
             color: var(--accent-blue);
             background: rgba(59, 130, 246, 0.1);
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 12px;
         }
 
-        .sidebar-card h3 {
+        .device-card-item h3 {
             font-size: 1.1rem;
             font-weight: 700;
         }
 
-        .sidebar-card p {
+        .device-card-item p {
             font-size: 0.85rem;
             color: var(--text-dim);
             line-height: 1.4;
@@ -617,7 +660,7 @@
             cursor: not-allowed;
         }
 
-        .sidebar-success {
+        .connection-success {
             margin-top: 1rem;
             padding: 0.8rem;
             border-radius: 8px;
@@ -631,15 +674,6 @@
         }
 
         /* Mobile Adjustments */
-        @media (max-width: 900px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                position: static;
-                margin-top: 2rem;
-            }
-        }
         @media (max-width: 600px) {
             .header-content h1 { font-size: 1.8rem; }
             .emergency-grid { grid-template-columns: 1fr; }
@@ -648,6 +682,19 @@
             #map { height: 300px; }
             .report-card { padding: 1.5rem; }
             .checkbox-group { grid-template-columns: 1fr; }
+            
+            .device-popup {
+                top: auto;
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 20px 20px 0 0;
+                transform: translateY(100%);
+            }
+            .device-popup.active {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -658,7 +705,10 @@
         <div id="selection-view">
             <header>
                 <div class="nav-top">
-                    <a href="index.html" class="btn-back"><i class="fas fa-home"></i> Home</a>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="index.html" class="btn-back"><i class="fas fa-home"></i> Home</a>
+                        <button class="btn-back btn-nav-device" onclick="toggleDevicePopup()"><i class="fas fa-microchip"></i> Device</button>
+                    </div>
                 </div>
                 <div class="header-content">
                     <h1>ResQ Emergency Assistance</h1>
@@ -727,7 +777,10 @@
         <div id="report-view" class="report-view">
             <header>
                 <div class="nav-top">
-                    <a href="#" id="back-to-selection" class="btn-back"><i class="fas fa-chevron-left"></i> Change Category</a>
+                    <div style="display: flex; gap: 1rem; width: 100%; justify-content: space-between;">
+                        <a href="#" id="back-to-selection" class="btn-back"><i class="fas fa-chevron-left"></i> Categories</a>
+                        <button class="btn-back btn-nav-device" onclick="toggleDevicePopup()"><i class="fas fa-microchip"></i> Device</button>
+                    </div>
                 </div>
                 <div class="header-content">
                     <h1 id="selected-title">Report Emergency</h1>
@@ -735,109 +788,107 @@
                 </div>
             </header>
 
-            <div class="dashboard-layout">
-                <!-- Main Report Section -->
-                <div class="main-content">
-                    <div id="map"></div>
+            <div id="map"></div>
 
-                    <button id="get-location" class="btn-location">
-                        <i class="fas fa-location-crosshairs"></i> Locate My Location
-                    </button>
+            <button id="get-location" class="btn-location">
+                <i class="fas fa-location-crosshairs"></i> Locate My Location
+            </button>
 
-                    <div class="report-card">
-                        <div class="form-group">
-                            <label>Emergency Type</label>
-                            <input type="text" id="emergency-type-input" class="form-control" readonly>
+            <div class="report-card">
+                <div class="form-group">
+                    <label>Emergency Type</label>
+                    <input type="text" id="emergency-type-input" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Additional Message</label>
+                    <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
+                </div>
+
+                <!-- Severity Level Section -->
+                <div class="severity-section">
+                    <label style="display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Severity Level</label>
+                    <div class="severity-group">
+                        <div class="severity-card" data-level="Low">
+                            <i class="fas fa-circle-info" style="color: #10b981;"></i>
+                            <span>Low</span>
                         </div>
-                        <div class="form-group">
-                            <label>Additional Message</label>
-                            <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
+                        <div class="severity-card active" data-level="Moderate">
+                            <i class="fas fa-triangle-exclamation" style="color: #f97316;"></i>
+                            <span>Moderate</span>
                         </div>
-
-                        <!-- Severity Level Section -->
-                        <div class="severity-section">
-                            <label style="display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Severity Level</label>
-                            <div class="severity-group">
-                                <div class="severity-card" data-level="Low">
-                                    <i class="fas fa-circle-info" style="color: #10b981;"></i>
-                                    <span>Low</span>
-                                </div>
-                                <div class="severity-card active" data-level="Moderate">
-                                    <i class="fas fa-triangle-exclamation" style="color: #f97316;"></i>
-                                    <span>Moderate</span>
-                                </div>
-                                <div class="severity-card" data-level="Critical">
-                                    <i class="fas fa-circle-exclamation" style="color: #ef4444;"></i>
-                                    <span>Critical</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Forward Alert To Section -->
-                        <div class="forward-section">
-                            <h4>Forward Alert To</h4>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="forward-to" value="Police">
-                                    <span>Police</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="forward-to" value="Ambulance">
-                                    <span>Ambulance</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" name="forward-to" value="Fire">
-                                    <span>Fire Department</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Photo Upload Section -->
-                        <div class="photo-upload-section">
-                            <label style="display: block; margin-bottom: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Upload Incident Photo</label>
-                            <div class="photo-upload-box" onclick="document.getElementById('photo-upload').click()">
-                                <i class="fas fa-cloud-arrow-up"></i>
-                                <p style="font-size: 0.9rem; color: var(--text-dim);">Tap to upload evidence photo</p>
-                                <input type="file" id="photo-upload" class="file-input" accept="image/*">
-                                <img id="photo-preview" class="photo-preview" src="#" alt="Preview">
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 2rem;">
-                            <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
-                            <button id="cancel-report" class="btn-cancel">Cancel Report</button>
+                        <div class="severity-card" data-level="Critical">
+                            <i class="fas fa-circle-exclamation" style="color: #ef4444;"></i>
+                            <span>Critical</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Sidebar: Devices -->
-                <div class="sidebar">
-                    <h2>Connected Devices</h2>
-                    
-                    <!-- Car Device -->
-                    <div class="sidebar-card">
-                        <div class="sidebar-card-header">
-                            <div class="sidebar-icon"><i class="fas fa-car-burst"></i></div>
-                            <h3>Link to Car</h3>
-                        </div>
-                        <p>Connect your vehicle system to automatically send accident alerts.</p>
-                        <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
-                        <div class="sidebar-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
-                    </div>
-
-                    <!-- Wearable Device -->
-                    <div class="sidebar-card">
-                        <div class="sidebar-card-header">
-                            <div class="sidebar-icon"><i class="fas fa-clock"></i></div>
-                            <h3>Link to Wearable</h3>
-                        </div>
-                        <p>Connect a smartwatch or wearable device to detect health emergencies.</p>
-                        <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
-                        <div class="sidebar-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
+                <!-- Forward Alert To Section -->
+                <div class="forward-section">
+                    <h4>Forward Alert To</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Police">
+                            <span>Police</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Ambulance">
+                            <span>Ambulance</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="forward-to" value="Fire">
+                            <span>Fire Department</span>
+                        </label>
                     </div>
                 </div>
 
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section">
+                    <label style="display: block; margin-bottom: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Upload Incident Photo</label>
+                    <div class="photo-upload-box" onclick="document.getElementById('photo-upload').click()">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <p style="font-size: 0.9rem; color: var(--text-dim);">Tap to upload evidence photo</p>
+                        <input type="file" id="photo-upload" class="file-input" accept="image/*">
+                        <img id="photo-preview" class="photo-preview" src="#" alt="Preview">
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
+                    <button id="cancel-report" class="btn-cancel">Cancel Report</button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- DEVICE POPUP OVERLAY & CONTAINER -->
+    <div id="device-popup-overlay" class="device-popup-overlay" onclick="toggleDevicePopup(false)"></div>
+    <div id="device-popup" class="device-popup">
+        <div class="popup-header">
+            <h2>Connect Device</h2>
+            <button class="btn-close-popup" onclick="toggleDevicePopup(false)"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <!-- Car Device -->
+        <div class="device-card-item">
+            <div class="device-card-header">
+                <div class="device-icon"><i class="fas fa-car-burst"></i></div>
+                <h3>Link to Car</h3>
+            </div>
+            <p>Connect your vehicle system to automatically send accident alerts.</p>
+            <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
+            <div class="connection-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
+        </div>
+
+        <!-- Wearable Device -->
+        <div class="device-card-item">
+            <div class="device-card-header">
+                <div class="device-icon"><i class="fas fa-clock"></i></div>
+                <h3>Link to Wearable</h3>
+            </div>
+            <p>Connect a smartwatch or wearable device to detect health emergencies.</p>
+            <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
+            <div class="connection-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
         </div>
     </div>
 
