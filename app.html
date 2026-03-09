@@ -519,133 +519,127 @@
             font-weight: 500;
         }
 
-        /* Device View */
-        .devices-view {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .devices-view.active {
-            display: block;
-        }
-
-        .device-grid {
+        /* Dashboard Layout */
+        .dashboard-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
         }
 
-        .device-card {
-            background: var(--card-bg);
+        .main-content {
+            width: 100%;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: rgba(15, 23, 42, 0.4);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            cursor: pointer;
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.8rem;
+        }
+
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
             transition: var(--transition);
+        }
+
+        .sidebar-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-card-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
             gap: 1rem;
-            backdrop-filter: blur(10px);
+            margin-bottom: 0.8rem;
         }
 
-        .device-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.15);
-        }
-
-        .device-icon {
-            font-size: 3.5rem;
+        .sidebar-icon {
+            font-size: 2rem;
             color: var(--accent-blue);
-            margin-bottom: 0.5rem;
-        }
-
-        .device-info h3 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .device-info p {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* Connection View */
-        .connection-view {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .connection-view.active {
-            display: block;
-        }
-
-        .connection-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 3rem 2rem;
-            text-align: center;
-            max-width: 600px;
-            margin: 2rem auto;
-            backdrop-filter: blur(10px);
-        }
-
-        .connection-icon-wrapper {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 2rem;
+            background: rgba(59, 130, 246, 0.1);
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 50%;
-            color: var(--accent-blue);
-            font-size: 3rem;
-        }
-
-        .connection-icon-wrapper::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border: 2px dashed var(--accent-blue);
-            border-radius: 50%;
-            animation: rotate 10s linear infinite;
-            opacity: 0.5;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .connection-status {
-            margin-top: 2rem;
-            padding: 1rem;
             border-radius: 12px;
+        }
+
+        .sidebar-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .sidebar-card p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .btn-connect {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-connect:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        .btn-connect:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .sidebar-success {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
             background: rgba(16, 185, 129, 0.1);
             color: #10b981;
-            font-weight: 700;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: none;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            text-align: center;
+            animation: fadeIn 0.3s ease;
         }
 
         /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                margin-top: 2rem;
+            }
+        }
         @media (max-width: 600px) {
             .header-content h1 { font-size: 1.8rem; }
             .emergency-grid { grid-template-columns: 1fr; }
@@ -665,7 +659,6 @@
             <header>
                 <div class="nav-top">
                     <a href="index.html" class="btn-back"><i class="fas fa-home"></i> Home</a>
-                    <a href="#" id="nav-device" class="btn-back"><i class="fas fa-microchip"></i> Device</a>
                 </div>
                 <div class="header-content">
                     <h1>ResQ Emergency Assistance</h1>
@@ -730,62 +723,6 @@
             </footer>
         </div>
 
-        <!-- DEVICES VIEW -->
-        <div id="devices-view" class="devices-view">
-            <header>
-                <div class="nav-top">
-                    <a href="#" id="back-to-selection-from-devices" class="btn-back"><i class="fas fa-chevron-left"></i> Back to Dashboard</a>
-                </div>
-                <div class="header-content">
-                    <h1>Connected Devices</h1>
-                    <p>Link your devices for intelligent emergency reporting.</p>
-                </div>
-            </header>
-
-            <div class="device-grid">
-                <div class="device-card" data-device="Car">
-                    <i class="fas fa-car-burst device-icon"></i>
-                    <div class="device-info">
-                        <h3>Link to Car</h3>
-                        <p>Connect your vehicle system to automatically send accident alerts.</p>
-                    </div>
-                </div>
-                <div class="device-card" data-device="Wearable">
-                    <i class="fas fa-clock device-icon"></i>
-                    <div class="device-info">
-                        <h3>Link to Wearable</h3>
-                        <p>Connect a smartwatch or wearable device to detect health emergencies.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONNECTION VIEW -->
-        <div id="connection-view" class="connection-view">
-            <header>
-                <div class="nav-top">
-                    <a href="#" id="back-to-devices" class="btn-back"><i class="fas fa-chevron-left"></i> Other Devices</a>
-                </div>
-                <div class="header-content">
-                    <h1 id="connection-title">Connect Device</h1>
-                    <p>Establish a secure link with your emergency device.</p>
-                </div>
-            </header>
-
-            <div class="connection-card">
-                <div class="connection-icon-wrapper">
-                    <i id="connection-icon" class="fas fa-car"></i>
-                </div>
-                <h2 id="device-display-name">Car System</h2>
-                <p id="device-explanation" style="color: var(--text-dim); margin: 1rem 0 2rem;">Connect your car system to allow automatic emergency reporting during accidents.</p>
-                
-                <button id="connect-device-btn" class="btn-submit">Connect Device</button>
-                <div id="connection-success" class="connection-status">
-                    <i class="fas fa-circle-check"></i> Device connected successfully (Demo)
-                </div>
-            </div>
-        </div>
-
         <!-- REPORT VIEW -->
         <div id="report-view" class="report-view">
             <header>
@@ -798,75 +735,108 @@
                 </div>
             </header>
 
-            <div id="map"></div>
+            <div class="dashboard-layout">
+                <!-- Main Report Section -->
+                <div class="main-content">
+                    <div id="map"></div>
 
-            <button id="get-location" class="btn-location">
-                <i class="fas fa-location-crosshairs"></i> Locate My Location
-            </button>
+                    <button id="get-location" class="btn-location">
+                        <i class="fas fa-location-crosshairs"></i> Locate My Location
+                    </button>
 
-            <div class="report-card">
-                <div class="form-group">
-                    <label>Emergency Type</label>
-                    <input type="text" id="emergency-type-input" class="form-control" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Additional Message</label>
-                    <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
-                </div>
-
-                <!-- Severity Level Section -->
-                <div class="severity-section">
-                    <label style="display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Severity Level</label>
-                    <div class="severity-group">
-                        <div class="severity-card" data-level="Low">
-                            <i class="fas fa-circle-info" style="color: #10b981;"></i>
-                            <span>Low</span>
+                    <div class="report-card">
+                        <div class="form-group">
+                            <label>Emergency Type</label>
+                            <input type="text" id="emergency-type-input" class="form-control" readonly>
                         </div>
-                        <div class="severity-card active" data-level="Moderate">
-                            <i class="fas fa-triangle-exclamation" style="color: #f97316;"></i>
-                            <span>Moderate</span>
+                        <div class="form-group">
+                            <label>Additional Message</label>
+                            <textarea id="additional-message" class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
                         </div>
-                        <div class="severity-card" data-level="Critical">
-                            <i class="fas fa-circle-exclamation" style="color: #ef4444;"></i>
-                            <span>Critical</span>
+
+                        <!-- Severity Level Section -->
+                        <div class="severity-section">
+                            <label style="display: block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Severity Level</label>
+                            <div class="severity-group">
+                                <div class="severity-card" data-level="Low">
+                                    <i class="fas fa-circle-info" style="color: #10b981;"></i>
+                                    <span>Low</span>
+                                </div>
+                                <div class="severity-card active" data-level="Moderate">
+                                    <i class="fas fa-triangle-exclamation" style="color: #f97316;"></i>
+                                    <span>Moderate</span>
+                                </div>
+                                <div class="severity-card" data-level="Critical">
+                                    <i class="fas fa-circle-exclamation" style="color: #ef4444;"></i>
+                                    <span>Critical</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forward Alert To Section -->
+                        <div class="forward-section">
+                            <h4>Forward Alert To</h4>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="forward-to" value="Police">
+                                    <span>Police</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="forward-to" value="Ambulance">
+                                    <span>Ambulance</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="forward-to" value="Fire">
+                                    <span>Fire Department</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Photo Upload Section -->
+                        <div class="photo-upload-section">
+                            <label style="display: block; margin-bottom: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Upload Incident Photo</label>
+                            <div class="photo-upload-box" onclick="document.getElementById('photo-upload').click()">
+                                <i class="fas fa-cloud-arrow-up"></i>
+                                <p style="font-size: 0.9rem; color: var(--text-dim);">Tap to upload evidence photo</p>
+                                <input type="file" id="photo-upload" class="file-input" accept="image/*">
+                                <img id="photo-preview" class="photo-preview" src="#" alt="Preview">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
+                            <button id="cancel-report" class="btn-cancel">Cancel Report</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Forward Alert To Section -->
-                <div class="forward-section">
-                    <h4>Forward Alert To</h4>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="forward-to" value="Police">
-                            <span>Police</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="forward-to" value="Ambulance">
-                            <span>Ambulance</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="forward-to" value="Fire">
-                            <span>Fire Department</span>
-                        </label>
+                <!-- Right Sidebar: Devices -->
+                <div class="sidebar">
+                    <h2>Connected Devices</h2>
+                    
+                    <!-- Car Device -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <div class="sidebar-icon"><i class="fas fa-car-burst"></i></div>
+                            <h3>Link to Car</h3>
+                        </div>
+                        <p>Connect your vehicle system to automatically send accident alerts.</p>
+                        <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
+                        <div class="sidebar-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
+                    </div>
+
+                    <!-- Wearable Device -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-header">
+                            <div class="sidebar-icon"><i class="fas fa-clock"></i></div>
+                            <h3>Link to Wearable</h3>
+                        </div>
+                        <p>Connect a smartwatch or wearable device to detect health emergencies.</p>
+                        <button class="btn-connect" onclick="simulateConnection(this)">Connect</button>
+                        <div class="sidebar-success"><i class="fas fa-circle-check"></i> Device connected successfully (Demo)</div>
                     </div>
                 </div>
 
-                <!-- Photo Upload Section -->
-                <div class="photo-upload-section">
-                    <label style="display: block; margin-bottom: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-dim);">Upload Incident Photo</label>
-                    <div class="photo-upload-box" onclick="document.getElementById('photo-upload').click()">
-                        <i class="fas fa-cloud-arrow-up"></i>
-                        <p style="font-size: 0.9rem; color: var(--text-dim);">Tap to upload evidence photo</p>
-                        <input type="file" id="photo-upload" class="file-input" accept="image/*">
-                        <img id="photo-preview" class="photo-preview" src="#" alt="Preview">
-                    </div>
-                </div>
-
-                <div style="margin-top: 2rem;">
-                    <button id="submit-report" class="btn-submit">Submit Emergency Report</button>
-                    <button id="cancel-report" class="btn-cancel">Cancel Report</button>
-                </div>
             </div>
         </div>
     </div>
